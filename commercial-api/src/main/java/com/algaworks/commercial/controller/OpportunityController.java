@@ -1,9 +1,12 @@
 package com.algaworks.commercial.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,6 +25,17 @@ public class OpportunityController {
 
 		return opportunityRepo.findAll();
 
+	}
+
+	@GetMapping("/{id}")
+	public ResponseEntity<Opportunity> show(@PathVariable Long id) {
+		Optional<Opportunity> opportunity = opportunityRepo.findById(id);
+
+		if (opportunity.isEmpty()) {
+			return ResponseEntity.notFound().build();
+		}
+
+		return ResponseEntity.ok(opportunity.get());
 	}
 
 }
