@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.algaworks.commercial.model.Opportunity;
 import com.algaworks.commercial.repository.OpportunityRepository;
@@ -47,6 +48,13 @@ public class OpportunityController {
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public Opportunity store(@Valid @RequestBody Opportunity opportunity) {
+		Optional<Opportunity> opportunityStored = opportunityRepo
+				.findByDescriptionAndProspectusName(opportunity.getDescription(), opportunity.getProspectusName());
+
+		if (opportunityStored.isPresent()) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Opportunity already exists.");
+		}
+
 		return opportunityRepo.save(opportunity);
 	}
 
